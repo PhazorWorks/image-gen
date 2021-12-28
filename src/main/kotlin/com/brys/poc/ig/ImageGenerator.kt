@@ -14,6 +14,7 @@ import kotlin.system.measureTimeMillis
 
 class ImageGenerator(private val cache: Cache) {
         private val staticBase = ImageIO.read(File("assets/images/apollo-template.png"))
+        private val bradStaticBase = ImageIO.read(File("assets/images/brad-template.png"))
         private val ubuntu = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/Ubuntu-Regular.ttf"))
         private val kosugi = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/KosugiMaru-Regular.ttf"))
         fun generateAddTrack(song: Song, user: String, id: String): BufferRes {

@@ -21,6 +21,7 @@ fun main() {
         val server = Server(3002,  imageGen)
         server.route()
     }
+
     Logger.success("[Main]: Operations started in ${timing}ms")
 
 }
