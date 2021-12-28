@@ -9,7 +9,7 @@ import javax.imageio.ImageIO
 
 
 
-class Server(port: Int, val imgGen: ImageGenerator) {
+class Server(port: Int, val imgGen: ImageGenerator, val debugLocal: Boolean) {
   val server = Javalin.create { config ->
       config.addStaticFiles{ files ->
           files.hostedPath = "/"
@@ -49,6 +49,9 @@ class Server(port: Int, val imgGen: ImageGenerator) {
             it.res.setContentLength(imgInBytes.size)
             it.res.addHeader("Cached", generated.cacheGrab.toString())
             it.result(imgInBytes)
+           if (debugLocal) {
+               ImageIO.write(generated.image, "png", File("debugoutput.png"))
+           }
         }
     }
     init {
