@@ -12,14 +12,14 @@ import javax.imageio.ImageIO
 import kotlin.system.measureTimeMillis
 
 
-class ImageGenerator(private val cache: Cache) {
+class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         private val staticBase = ImageIO.read(File("assets/images/apollo-template.png"))
         private val bradStaticBase = ImageIO.read(File("assets/images/brad-template.png"))
         private val ubuntu = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/Ubuntu-Regular.ttf"))
         private val kosugi = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/KosugiMaru-Regular.ttf"))
         fun generateAddTrack(song: Song, user: String, id: String): BufferRes {
             val base = copyImage(staticBase)!!
-            val thumbnail = cache.grabCacheThumb(id)
+            val thumbnail = cache.grabCacheThumb(id, fallback)
             val imageGenTime = measureTimeMillis {
                 val g = base.createGraphics()
                 g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -43,6 +43,7 @@ class ImageGenerator(private val cache: Cache) {
                 Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Graphics Disposed  ============ Render")
             }
             Logger.success("[Image Generator -> Add Track -> Render]: Finished in ${imageGenTime}ms")
+
             return BufferRes(base, thumbnail.cacheGrab)
         }
 
