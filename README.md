@@ -1,7 +1,7 @@
 # Apollo Image Generator (Kotlin)
 An experimental image generator for Apollo
 
-## How to run:
+## How to run
   * It's recommended to run this jar with JDK 18 (Thanks to LOOM read more [here](https://wiki.openjdk.java.net/display/loom/Main))
   * Once these requirements have been met, download the release jar from the release page on GitHub.
   * The webserver should be on port `3002`
@@ -9,7 +9,7 @@ This repo contains a highly efficient and specially made image generation for Ap
 
 It uses java's 2DGraphics API part of the modern java.awt package to fill in the template image in record time!
 
-## Current Speeds:
+## Current Speeds
 * With Brad's template:
 
 `-` 20-30ms (With cached thumbnail) 
