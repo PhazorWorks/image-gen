@@ -4,7 +4,7 @@
             <pattern>%boldBlue(%-15.-15logger{0})│  %boldYellow(%-6level)│ %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="INFO">
+    <root level="ERROR">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

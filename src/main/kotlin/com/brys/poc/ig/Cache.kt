@@ -1,6 +1,5 @@
 package com.brys.poc.ig
 
-import org.eclipse.jetty.http.HttpStatus
 import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -27,18 +26,19 @@ class Cache(private val executor: ExecutorService) {
             }
 
             val streamedURL = ImageIO.read(url)
-             executor.submit {
+            executor.submit {
                 Logger.info("[ThreadPool -> CacheIMG]: Starting...")
-                 val saveTime = measureTimeMillis {
-                     ImageIO.write(streamedURL, "jpg", File("cache/${id}.jpg"))
-                 }
-                 Logger.success("[ThreadPool -> com.brys.poc.ig.Cache IMG]: Finished in ${saveTime}ms")
+                val saveTime = measureTimeMillis {
+                    ImageIO.write(streamedURL, "jpg", File("cache/${id}.jpg"))
+                }
+                Logger.success("[ThreadPool -> com.brys.poc.ig.Cache IMG]: Finished in ${saveTime}ms")
             }
-            return ImageGenerator.BufferRes(streamedURL, false)
+            return ImageGenerator.BufferRes(streamedURL, false, 0)
         }
         Logger.success("[com.brys.poc.ig.Cache -> Retrieve]: Cached file found for $id")
-        return ImageGenerator.BufferRes(ImageIO.read(cached), true)
+        return ImageGenerator.BufferRes(ImageIO.read(cached), true, 0)
     }
+
     init {
         Logger.info("[ClassLoader -> com.brys.poc.ig.Cache]: Initialized")
     }
