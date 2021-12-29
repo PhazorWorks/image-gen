@@ -72,34 +72,34 @@ class Server(
                     Logger.debug("[ThreadPool -> WriteDebugIMG]: Debug image wrote to disk in ${timeDebugWrite}ms")
                 }
             }
-            app.post("/np") {
-                val body = it.bodyAsClass<NPTrackPayload>()
-                val generated =  imgGen.generateNPTrack(
-                    ImageGenerator.Song(
-                        body.title.substringBefore("-"),
-                        body.title.substringAfter("-"),
-                        length = body.duration,
-                        position = body.position
-                    ), body.author, body.identifier
-                )
-                val baos = ByteArrayOutputStream()
-                ImageIO.write(generated!!.image, "png", baos)
-                val imgInBytes = baos.toByteArray()
-                baos.flush()
-                baos.close()
-                it.contentType("image/png")
-                it.res.contentType = "image/png"
-                it.res.setContentLength(imgInBytes.size)
-                it.res.addHeader("Cached", generated.cacheGrab.toString())
-                it.res.addHeader("Generated", generated.timing.toString())
-                it.result(imgInBytes)
-                if (debugLocal) {
-                    executor.submit {
-                        val timeDebugWrite = measureTimeMillis {
-                            ImageIO.write(generated.image, "png", File("debugoutputnp.png"))
-                        }
-                        Logger.debug("[ThreadPool -> WriteDebugIMG]: Debug image for np wrote to disk in ${timeDebugWrite}ms")
+        }
+        app.post("/np") {
+            val body = it.bodyAsClass<NPTrackPayload>()
+            val generated =  imgGen.generateNPTrack(
+                ImageGenerator.Song(
+                    body.title.substringBefore("-"),
+                    body.title.substringAfter("-"),
+                    length = body.duration,
+                    position = body.position
+                ), body.author, body.identifier
+            )
+            val baos = ByteArrayOutputStream()
+            ImageIO.write(generated!!.image, "png", baos)
+            val imgInBytes = baos.toByteArray()
+            baos.flush()
+            baos.close()
+            it.contentType("image/png")
+            it.res.contentType = "image/png"
+            it.res.setContentLength(imgInBytes.size)
+            it.res.addHeader("Cached", generated.cacheGrab.toString())
+            it.res.addHeader("Generated", generated.timing.toString())
+            it.result(imgInBytes)
+            if (debugLocal) {
+                executor.submit {
+                    val timeDebugWrite = measureTimeMillis {
+                        ImageIO.write(generated.image, "png", File("debugoutputnp.png"))
                     }
+                    Logger.debug("[ThreadPool -> WriteDebugIMG]: Debug image for np wrote to disk in ${timeDebugWrite}ms")
                 }
             }
         }
