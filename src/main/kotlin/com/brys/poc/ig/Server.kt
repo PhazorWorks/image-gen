@@ -25,7 +25,37 @@ class Server(
     }
     val app = server.start(port)
     fun route() {
-
+        app.post("/np") {
+            val body = it.bodyAsClass<NPTrackPayload>()
+            println(body)
+            val generated = imgGen.generateNPTrack(
+                ImageGenerator.Song(
+                    body.title.substringBefore("-"),
+                    body.title.substringAfter("-"),
+                    length = body.duration,
+                    position = body.position
+                ), body.author.toString(), body.identifier
+            )
+            val baos = ByteArrayOutputStream()
+            ImageIO.write(generated.image, "png", baos)
+            val imgInBytes = baos.toByteArray()
+            baos.flush()
+            baos.close()
+            it.contentType("image/png")
+            it.res.contentType = "image/png"
+            it.res.setContentLength(imgInBytes.size)
+            it.res.addHeader("Cached", generated.cacheGrab.toString())
+            it.res.addHeader("Generated", generated.timing.toString())
+            it.result(imgInBytes)
+            if (debugLocal) {
+                executor.submit {
+                    val timeDebugWrite = measureTimeMillis {
+                        ImageIO.write(generated.image, "png", File("debugoutputnp.png"))
+                    }
+                    Logger.debug("[ThreadPool -> WriteDebugIMG]: Debug image for np wrote to disk in ${timeDebugWrite}ms")
+                }
+            }
+        }
         app.get("/cache") {
             val files = File("./cache").listFiles()
             val filesID = mutableListOf<IDFiles>()
@@ -73,36 +103,7 @@ class Server(
                 }
             }
         }
-        app.post("/np") {
-            val body = it.bodyAsClass<NPTrackPayload>()
-            val generated =  imgGen.generateNPTrack(
-                ImageGenerator.Song(
-                    body.title.substringBefore("-"),
-                    body.title.substringAfter("-"),
-                    length = body.duration,
-                    position = body.position
-                ), body.author, body.identifier
-            )
-            val baos = ByteArrayOutputStream()
-            ImageIO.write(generated!!.image, "png", baos)
-            val imgInBytes = baos.toByteArray()
-            baos.flush()
-            baos.close()
-            it.contentType("image/png")
-            it.res.contentType = "image/png"
-            it.res.setContentLength(imgInBytes.size)
-            it.res.addHeader("Cached", generated.cacheGrab.toString())
-            it.res.addHeader("Generated", generated.timing.toString())
-            it.result(imgInBytes)
-            if (debugLocal) {
-                executor.submit {
-                    val timeDebugWrite = measureTimeMillis {
-                        ImageIO.write(generated.image, "png", File("debugoutputnp.png"))
-                    }
-                    Logger.debug("[ThreadPool -> WriteDebugIMG]: Debug image for np wrote to disk in ${timeDebugWrite}ms")
-                }
-            }
-        }
+
     }
 
 
@@ -123,10 +124,10 @@ class Server(
 
     data class NPTrackPayload(
         val title: String,
-        val author: String = "N/A",
+        val author: String? = "N/A",
         val duration: Long,
         val position: Long,
-        val identifier: String
+        val identifier: String?
     )
 
     data class IDFiles(val name: String, val size: Long)

@@ -75,7 +75,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         Logger.success("[Image Generator -> Add Track -> Render]: Finished in ${imageGenTime}ms")
         return BufferRes(base, thumbnail.cacheGrab, imageGenTime)
     }
-    fun generateNPTrack(song: Song, user: String, id: String?): BufferRes? {
+    fun generateNPTrack(song: Song, user: String = "N/A", id: String?): BufferRes {
         val base = BufferedImage(500, 250, BufferedImage.TYPE_INT_ARGB)
         val thumbnail = id?.let { cache.grabCacheThumb(it, fallback) }
         val startColor = Color.decode("#4568dc")
@@ -114,7 +114,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Graphics Disposed   ============ Render")
         }
         Logger.success("[Image Generator -> Add Track -> Render]: Finished in ${imageGenTime}ms")
-        return thumbnail?.let { BufferRes(base, it.cacheGrab, imageGenTime) }
+        return BufferRes(base, false, imageGenTime)
     }
     init {
         Logger.info("[ClassLoader -> com.brys.poc.ig.ImageGenerator]: Initialized")
