@@ -24,6 +24,6 @@ val jar by tasks.getting(Jar::class) {
 }
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     baseName = "apollo_image_generator"
-    classifier = "POC-W.O-NP"
-    version = "PRE_0.0.1"
+    classifier = "Prod"
+    version = "PRE_0.1.0"
 }

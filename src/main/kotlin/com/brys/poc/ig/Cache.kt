@@ -14,7 +14,7 @@ class Cache(private val executor: ExecutorService) {
     fun grabCacheThumb(id: String, fallback: Boolean): ImageGenerator.BufferRes {
         val cached = File("cache/${id}.jpg")
         if (!cached.exists()) {
-            Logger.warn("[com.brys.poc.ig.Cache -> Retrieve -> FileNotFound]: Cached image for ${id} doesn't exist.\nStreaming JPG and writing cache file.")
+            Logger.warn("[com.brys.poc.ig.Cache -> Retrieve -> FileNotFound]: Cached image for $id doesn't exist.\nStreaming JPG and writing cache file.")
             var url = URL("https://img.youtube.com/vi/${id}/maxresdefault.jpg")
             if (fallback) {
                 Logger.info("[Cache -> CacheThumb -> Fallback]: Fallback is enabled, testing HQDefault url")

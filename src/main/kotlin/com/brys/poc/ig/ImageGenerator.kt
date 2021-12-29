@@ -1,8 +1,6 @@
 package com.brys.poc.ig
 
-import java.awt.Color
-import java.awt.Font
-import java.awt.RenderingHints
+import java.awt.*
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferByte
 import java.io.File
@@ -14,6 +12,7 @@ import kotlin.system.measureTimeMillis
 class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
     private val staticBase = ImageIO.read(File("assets/images/apollo-template.png"))
     private val bradTemplateStaticBase = ImageIO.read(File("assets/images/brad-template.png"))
+    private val bradTemplateNPBase = ImageIO.read(File("assets/images/brad-template-np-poc.png"))
     private val apolloImage = ImageIO.read(File("assets/images/logo.png"))
     private val ubuntu = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/Ubuntu-Regular.ttf"))
     private val kosugi = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/KosugiMaru-Regular.ttf"))
@@ -76,7 +75,47 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         Logger.success("[Image Generator -> Add Track -> Render]: Finished in ${imageGenTime}ms")
         return BufferRes(base, thumbnail.cacheGrab, imageGenTime)
     }
-
+    fun generateNPTrack(song: Song, user: String, id: String?): BufferRes? {
+        val base = BufferedImage(500, 250, BufferedImage.TYPE_INT_ARGB)
+        val thumbnail = id?.let { cache.grabCacheThumb(it, fallback) }
+        val startColor = Color.decode("#4568dc")
+        val endColor = Color.decode("#b06ab3")
+        val imageGenTime = measureTimeMillis {
+            val g = base.createGraphics()
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
+            Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Rendering hints set ============ Render")
+            if (thumbnail != null) {
+                g.drawImage(thumbnail.image, -200, -150, 700, 420, null)
+            }
+            Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Thumbnail drawn. Disposing...")
+            g.drawImage(bradTemplateNPBase, 0, 0, 500, 250, null)
+            g.font = athiti.deriveFont(Font.BOLD, 18f)
+            g.color = Color.decode("#E2E2E2")
+            g.drawString("${song.author} - ${song.name}", 15, 205)
+            g.drawString(formatToDigitalClock(song.position), 404, 205)
+            Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Song data drawn")
+            g.font = athiti.deriveFont(Font.PLAIN, 14f)
+            g.color = Color.decode("#239CDF")
+            g.drawString(user, 97, 241)
+            Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: User data drawn")
+            g.drawString(formatToDigitalClock(song.length), 455, 241)
+            val timeGrad = measureTimeMillis {
+                g.paint = GradientPaint(
+                    167F, 18F, startColor,
+                    318F, 25F, endColor
+                )
+                g.fill(Rectangle(167, 18, calcNPBar(song.position, song.length).toInt(), 25))
+            }
+            Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: NP bar drawn (took ${timeGrad}ms)")
+            g.drawImage(apolloImage, 15, 15, 32, 32, null)
+            Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Logo drawn. Disposing...")
+            g.dispose()
+            Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Graphics Disposed   ============ Render")
+        }
+        Logger.success("[Image Generator -> Add Track -> Render]: Finished in ${imageGenTime}ms")
+        return thumbnail?.let { BufferRes(base, it.cacheGrab, imageGenTime) }
+    }
     init {
         Logger.info("[ClassLoader -> com.brys.poc.ig.ImageGenerator]: Initialized")
     }
@@ -94,7 +133,11 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
             }
         }
     }
-
+    private fun calcNPBar(pos: Long, dur: Long): Long {
+        val width = 319
+        val percent = dur / pos
+        return width / percent
+    }
     private fun copyImage(source: BufferedImage): BufferedImage {
         val bi = BufferedImage(source.width, source.height, source.type)
         val sourceData = (source.raster.dataBuffer as DataBufferByte).data
@@ -103,6 +146,6 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         return bi
     }
 
-    data class Song(val name: String, val author: String, val uri: String, val length: Long)
+    data class Song(val name: String, val author: String = "N/A", val uri: String = "N/A", val length: Long, val position: Long = 0)
     data class BufferRes(val image: BufferedImage, val cacheGrab: Boolean, val timing: Long)
 }
