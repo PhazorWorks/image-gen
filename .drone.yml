@@ -1,0 +1,13 @@
+kind: pipeline
+type: docker
+name: build
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: compile check
+    image: gradle:jdk17
+    commands:
+      - gradle build
