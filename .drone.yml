@@ -21,7 +21,7 @@ steps:
         from_secret: github-token
     commands:
       - chmod +x gradlew
-      - gradle jib --image=ghcr.io/phazorworks/image-gen:dev -Djib.to.auth.username=gigafyde -Djib.to.auth.password=$GITHUB
+      - ./gradlew jib --image=ghcr.io/phazorworks/image-gen:dev -Djib.to.auth.username=gigafyde -Djib.to.auth.password=$GITHUB
     when:
       event:
         - push
