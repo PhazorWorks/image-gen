@@ -64,6 +64,12 @@ class Server(
                 return@delete
             }
         }
+        app.post("/np/direct") {
+
+        }
+        app.post("/add/direct") {
+
+        }
         app.post("/np") {
             val body = it.bodyAsClass<NPTrackPayload>()
             val direct = it.queryParam("direct").toBoolean()
