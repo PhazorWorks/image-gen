@@ -10,7 +10,8 @@ steps:
   - name: compile check
     image: openjdk:18-jdk-slim
     commands:
-      - gradle build
+      - chmod +x gradlew
+      - ./gradlew build
 
 
   - name: build-production-image
@@ -19,6 +20,7 @@ steps:
       GITHUB:
         from_secret: github-token
     commands:
+      - chmod +x gradlew
       - gradle jib --image=ghcr.io/phazorworks/image-gen:dev -Djib.to.auth.username=gigafyde -Djib.to.auth.password=$GITHUB
     when:
       event:
