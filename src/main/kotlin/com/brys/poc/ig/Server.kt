@@ -4,6 +4,7 @@ import io.javalin.Javalin
 import io.javalin.http.staticfiles.Location
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.*
 import java.util.concurrent.ExecutorService
 import javax.imageio.ImageIO
 import kotlin.system.measureTimeMillis
@@ -11,23 +12,61 @@ import kotlin.system.measureTimeMillis
 
 class Server(
     port: Int,
-    val imgGen: ImageGenerator,
-    val debugLocal: Boolean,
-    val useBradTemplate: Boolean,
-    val executor: ExecutorService
+    private val imgGen: ImageGenerator,
+    private val debugLocal: Boolean,
+    private val useBradTemplate: Boolean,
+    private val executor: ExecutorService
 ) {
-    val server = Javalin.create { config ->
+    private val server: Javalin = Javalin.create { config ->
         config.addStaticFiles { files ->
             files.hostedPath = "/"
             files.directory = "./cache"
             files.location = Location.EXTERNAL
         }
     }
-    val app = server.start(port)
+    private val registeredClients = mutableListOf<DiscordRestClient>()
+    val app: Javalin = server.start(port)
     fun route() {
+        app.post("/register") {
+            val register = it.bodyAsClass<Register>()
+            println(registeredClients.find { c -> c.auth == register.token })
+            if (registeredClients.find { c -> c.auth == register.token } != null) {
+                it.status(403).json(object {val message = "Client already exists (403)"})
+                return@post
+            }
+            val verifier = UUID.randomUUID().toString()
+            registeredClients.add(DiscordRestClient(verifier, register.token, executor))
+            it.status(201).json(object {val verifyToken = verifier})
+            Logger.success("[Server -> Register]: New client registered (Verify = ${verifier})")
+            return@post
+        }
+        app.get("/registered/{token}") {
+
+            val register = it.pathParam("token")
+            registeredClients.forEach { c -> println(c.verifyToken) }
+            if (registeredClients.find { c -> c.verifyToken == register } != null) {
+                it.status(200)
+                return@get
+            } else {
+                it.status(404)
+                return@get
+            }
+        }
+        app.delete("/unregister") {
+            val register = it.bodyAsClass<Unregister>()
+            if (registeredClients.find { c -> c.verifyToken == register.verifyToken } == null) {
+                it.status(403)
+                return@delete
+            } else {
+                registeredClients.removeAll { c -> c.verifyToken == register.verifyToken && c.auth == register.token }
+                it.status(410)
+                Logger.error("[Server -> Register]: Client removed (Verify = ${register.verifyToken})")
+                return@delete
+            }
+        }
         app.post("/np") {
             val body = it.bodyAsClass<NPTrackPayload>()
-            println(body)
+            val direct = it.queryParam("direct").toBoolean()
             val generated = imgGen.generateNPTrack(
                 ImageGenerator.Song(
                     body.title.substringBefore("-"),
@@ -131,4 +170,7 @@ class Server(
     )
 
     data class IDFiles(val name: String, val size: Long)
+    data class Register(val token: String)
+    data class Unregister(val token: String, val verifyToken: String)
+    data class CheckRegister(val verifyToken: String)
 }

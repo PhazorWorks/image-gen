@@ -16,6 +16,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.9")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
+    implementation("dev.kord:kord-core:0.8.0-M8")
 }
 val jar by tasks.getting(Jar::class) {
     manifest {
