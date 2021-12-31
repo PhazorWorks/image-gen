@@ -19,7 +19,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
     private val athiti = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/Athiti.ttf"))
     fun generateAddTrack(song: Song, user: String, id: String): BufferRes {
         val base = copyImage(staticBase)
-        val thumbnail = cache.grabCacheThumb(id, fallback)
+        val thumbnail = cache.grabCacheThumb(id, fallback, false)
         val imageGenTime = measureTimeMillis {
             val g = base.createGraphics()
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -49,7 +49,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
 
     fun generateAddTrackBradTemplate(song: Song, user: String, id: String): BufferRes {
         val base = BufferedImage(500, 250, BufferedImage.TYPE_INT_ARGB)
-        val thumbnail = cache.grabCacheThumb(id, fallback)
+        val thumbnail = cache.grabCacheThumb(id, fallback, true)
         val imageGenTime = measureTimeMillis {
             val g = base.createGraphics()
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -77,7 +77,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
     }
     fun generateNPTrack(song: Song, user: String = "N/A", id: String?): BufferRes {
         val base = BufferedImage(500, 250, BufferedImage.TYPE_INT_ARGB)
-        val thumbnail = id?.let { cache.grabCacheThumb(it, fallback) }
+        val thumbnail = id?.let { cache.grabCacheThumb(it, fallback, true) }
         val startColor = Color.decode("#4568dc")
         val endColor = Color.decode("#b06ab3")
         val imageGenTime = measureTimeMillis {

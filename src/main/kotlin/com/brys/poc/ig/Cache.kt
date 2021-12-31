@@ -11,19 +11,19 @@ import kotlin.system.measureTimeMillis
 
 
 class Cache(private val executor: ExecutorService) {
-    fun grabCacheThumb(id: String, fallback: Boolean): ImageGenerator.BufferRes {
+    fun grabCacheThumb(id: String, fallback: Boolean, bradGen: Boolean): ImageGenerator.BufferRes {
         val cached = File("cache/${id}.jpg")
         if (!cached.exists()) {
             Logger.warn("[com.brys.poc.ig.Cache -> Retrieve -> FileNotFound]: Cached image for $id doesn't exist.\nStreaming JPG and writing cache file.")
             var url = URL("https://img.youtube.com/vi/${id}/maxresdefault.jpg")
-            if (fallback) {
+            if (fallback && !bradGen) {
                 Logger.info("[Cache -> CacheThumb -> Fallback]: Fallback is enabled, testing HQDefault url")
                 val code = getResponseCode("https://img.youtube.com/vi/${id}/maxresdefault.jpg")
                 if (code == 404) {
                     Logger.error("[Cache -> CacheThumb -> Fallback]: HQDefault doesn't exist, falling back to MQDefault")
                     url = URL("https://img.youtube.com/vi/${id}/mqdefault.jpg")
                 }
-            }
+            } else if (bradGen) {url = URL("https://img.youtube.com/vi/${id}/hqdefault.jpg")}
 
             val streamedURL = ImageIO.read(url)
             executor.submit {
