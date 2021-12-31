@@ -8,6 +8,18 @@ platform:
 
 steps:
   - name: compile check
-    image: gradle:jdk17
+    image: openjdk:18-jdk-slim
     commands:
       - gradle build
+
+
+  - name: build-production-image
+    image: openjdk:18-jdk-slim
+    environment:
+      GITHUB:
+        from_secret: github-token
+    commands:
+      - gradle jib --image=ghcr.io/phazorworks/image-gen:dev -Djib.to.auth.username=gigafyde -Djib.to.auth.password=$GITHUB
+    when:
+      event:
+        - push

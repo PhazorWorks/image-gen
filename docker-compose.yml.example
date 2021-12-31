@@ -1,0 +1,12 @@
+version: "3"
+services:
+  image-gen:
+    image: ghcr.io/phazorworks/image-gen:dev
+    environment:
+      - PORT=3002
+      - FALLBACK=true
+      - BRADGEN=true
+      - DEBUG=false
+    restart: always
+    volumes:
+      image-gen-cache:/app/cache

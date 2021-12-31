@@ -1,10 +1,16 @@
 plugins {
     kotlin("jvm") version "1.5.10"
+    application
     id("com.github.johnrengelman.shadow") version "2.0.4"
+    id ("com.google.cloud.tools.jib") version "3.1.4"
 }
 
 group = "com.brys.poc.ig"
-version = "1.0-SNAPSHOT"
+version = "1.0-snapshot"
+
+application {
+    mainClassName = "com.brys.poc.ig.RunKt"
+}
 
 repositories {
     mavenCentral()
@@ -26,4 +32,13 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     baseName = "apollo_image_generator"
     classifier = "Prod"
     version = "PRE_0.1.0"
+}
+
+jib {
+    from {
+        image = "openjdk:18-jdk-slim"
+    }
+    container {
+        mainClass = "com.brys.poc.ig.RunKt"
+    }
 }
