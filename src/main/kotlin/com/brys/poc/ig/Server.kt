@@ -14,12 +14,13 @@ class Server(
     val imgGen: ImageGenerator,
     val debugLocal: Boolean,
     val useBradTemplate: Boolean,
-    val executor: ExecutorService
+    val executor: ExecutorService,
+    val path: String
 ) {
     val server = Javalin.create { config ->
         config.addStaticFiles { files ->
             files.hostedPath = "/"
-            files.directory = "./cache"
+            files.directory = path
             files.location = Location.EXTERNAL
         }
     }
