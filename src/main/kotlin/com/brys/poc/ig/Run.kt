@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
         val asyncThreadPool = Executors.newCachedThreadPool()
         val cache = Cache(asyncThreadPool, path)
         val imageGen = ImageGenerator(cache, fallback)
-        val server = Server(3002, imageGen, debugLocal, bradTemplate, asyncThreadPool)
+        val server = Server(3002, imageGen, debugLocal, bradTemplate, asyncThreadPool, path)
         server.route()
     }
 
