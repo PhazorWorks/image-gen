@@ -10,9 +10,9 @@ import javax.imageio.ImageIO
 import kotlin.system.measureTimeMillis
 
 
-class Cache(private val executor: ExecutorService) {
+class Cache(private val executor: ExecutorService, private val path: String) {
     fun grabCacheThumb(id: String, fallback: Boolean, bradGen: Boolean): ImageGenerator.BufferRes {
-        val cached = File("cache/${id}.jpg")
+        val cached = File("${path}/${id}.jpg")
         if (!cached.exists()) {
             Logger.warn("[com.brys.poc.ig.Cache -> Retrieve -> FileNotFound]: Cached image for $id doesn't exist.\nStreaming JPG and writing cache file.")
             var url = URL("https://img.youtube.com/vi/${id}/maxresdefault.jpg")
