@@ -29,7 +29,7 @@ class Cache(private val executor: ExecutorService, private val path: String) {
             executor.submit {
                 Logger.info("[ThreadPool -> CacheIMG]: Starting...")
                 val saveTime = measureTimeMillis {
-                    ImageIO.write(streamedURL, "jpg", File("cache/${id}.jpg"))
+                    ImageIO.write(streamedURL, "jpg", File("${path}/${id}.jpg"))
                 }
                 Logger.success("[ThreadPool -> com.brys.poc.ig.Cache IMG]: Finished in ${saveTime}ms")
             }
