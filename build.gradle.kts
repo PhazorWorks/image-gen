@@ -36,9 +36,18 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
 
 jib {
     from {
-        image = "openjdk:18-jdk-slim"
+        image = "openjdk:18-jdk-buster"
     }
     container {
         mainClass = "com.brys.poc.ig.RunKt"
+
+    }
+    extraDirectories {
+        paths {
+            path {
+                setFrom("assets/")
+                into = "${jib.container.appRoot}/assets"
+            }
+        }
     }
 }
