@@ -6,6 +6,7 @@ import java.awt.image.DataBufferByte
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
+import kotlin.math.min
 import kotlin.system.measureTimeMillis
 
 
@@ -50,6 +51,8 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
     fun generateAddTrackBradTemplate(song: Song, user: String, id: String): BufferRes {
         val base = BufferedImage(500, 250, BufferedImage.TYPE_INT_ARGB)
         val thumbnail = cache.grabCacheThumb(id, fallback, true)
+        var shortned = "${song.author} - ${song.name}"
+        shortned = shortned.substring(0, min(shortned.length, 58))+"..."
         val imageGenTime = measureTimeMillis {
             val g = base.createGraphics()
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -60,11 +63,11 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
             g.drawImage(bradTemplateStaticBase, 0, 0, 500, 250, null)
             g.font = athiti.deriveFont(Font.BOLD, 18f)
             g.color = Color.decode("#E2E2E2")
-            g.drawString("${song.author} - ${song.name}", 15, 205)
+            g.drawString(shortned, 15, 205)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Song data drawn")
             g.font = athiti.deriveFont(Font.PLAIN, 14f)
             g.color = Color.decode("#239CDF")
-            g.drawString(user, 97, 241)
+            g.drawString(user.substring(0, min(shortned.length, 40)), 97, 241)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: User data drawn")
             g.drawString(formatToDigitalClock(song.length), 455, 241)
             g.drawImage(apolloImage, 15, 15, 32, 32, null)
@@ -80,6 +83,8 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         val thumbnail = id?.let { cache.grabCacheThumb(it, fallback, true) }
         val startColor = Color.decode("#4568dc")
         val endColor = Color.decode("#b06ab3")
+        var shortned = "${song.author} - ${song.name}"
+        shortned = shortned.substring(0, min(shortned.length, 44));
         val imageGenTime = measureTimeMillis {
             val g = base.createGraphics()
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -92,8 +97,8 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
             g.drawImage(bradTemplateNPBase, 0, 0, 500, 250, null)
             g.font = athiti.deriveFont(Font.BOLD, 18f)
             g.color = Color.decode("#E2E2E2")
-            g.drawString("${song.author} - ${song.name}", 15, 205)
-            g.drawString(formatToDigitalClock(song.position), 404, 205)
+            g.drawString(shortned, 15, 205)
+            g.drawString(formatToDigitalClock(song.position), 400, 205)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Song data drawn")
             g.font = athiti.deriveFont(Font.PLAIN, 14f)
             g.color = Color.decode("#239CDF")
@@ -146,6 +151,6 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         return bi
     }
 
-    data class Song(val name: String, val author: String = "N/A", val uri: String = "N/A", val length: Long, val position: Long = 0)
+    data class Song(var name: String, var author: String = "N/A", val uri: String = "N/A", val length: Long, val position: Long = 0)
     data class BufferRes(val image: BufferedImage, val cacheGrab: Boolean, val timing: Long)
 }

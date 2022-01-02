@@ -2,6 +2,7 @@ package com.brys.poc.ig
 
 import java.io.File
 import java.util.concurrent.Executors
+import javax.imageio.ImageIO
 import kotlin.system.measureTimeMillis
 
 fun main(args: Array<String>) {
