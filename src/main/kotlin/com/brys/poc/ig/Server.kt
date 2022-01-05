@@ -7,6 +7,7 @@ import java.io.File
 import java.util.concurrent.ExecutorService
 import javax.imageio.ImageIO
 import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 
 
 class Server(
@@ -23,16 +24,16 @@ class Server(
             files.directory = path
             files.location = Location.EXTERNAL
         }
+        config.enableCorsForAllOrigins()
     }
     val app = server.start(port)
     fun route() {
         app.post("/np") {
             val body = it.bodyAsClass<NPTrackPayload>()
-            println(body)
             val generated = imgGen.generateNPTrack(
                 ImageGenerator.Song(
-                    body.title.substringBefore("-"),
-                    body.title.substringAfter("-"),
+                    body.title,
+                    body.author.toString(),
                     length = body.duration,
                     position = body.position
                 ), body.author.toString(), body.identifier
