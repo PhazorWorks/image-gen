@@ -51,8 +51,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
     fun generateAddTrackBradTemplate(song: Song, user: String, id: String?): BufferRes {
         val base = BufferedImage(500, 250, BufferedImage.TYPE_INT_ARGB)
         val thumbnail = cache.grabCacheThumb(id, fallback, true)
-        var shortned = "${song.author} - ${song.name}"
-        shortned = shortned.substring(0, min(shortned.length, 58))+"..."
+        var shortned = "${song.author} - ${song.name}".take(58)
         val imageGenTime = measureTimeMillis {
             val g = base.createGraphics()
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -67,7 +66,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Song data drawn")
             g.font = athiti.deriveFont(Font.PLAIN, 14f)
             g.color = Color.decode("#239CDF")
-            g.drawString(user.substring(0, min(shortned.length, 40)), 97, 241)
+            g.drawString(user.take(40), 97, 241)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: User data drawn")
             g.drawString(formatToDigitalClock(song.length), 455, 241)
             g.drawImage(apolloImage, 15, 15, 32, 32, null)
@@ -83,8 +82,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         val thumbnail = id?.let { cache.grabCacheThumb(it, fallback, true) }
         val startColor = Color.decode("#4568dc")
         val endColor = Color.decode("#b06ab3")
-        var shortned = "${song.author} - ${song.name}"
-        shortned = shortned.substring(0, min(shortned.length, 44));
+        var shortned = "${song.author} - ${song.name}".take(44)
         val imageGenTime = measureTimeMillis {
             val g = base.createGraphics()
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -102,7 +100,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Song data drawn")
             g.font = athiti.deriveFont(Font.PLAIN, 14f)
             g.color = Color.decode("#239CDF")
-            g.drawString(user, 97, 241)
+            g.drawString(user.take(32), 97, 241)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: User data drawn")
             g.drawString(formatToDigitalClock(song.length), 455, 241)
             val timeGrad = measureTimeMillis {

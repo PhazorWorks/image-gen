@@ -32,8 +32,8 @@ class Server(
             val body = it.bodyAsClass<NPTrackPayload>()
             val generated = imgGen.generateNPTrack(
                 ImageGenerator.Song(
-                    body.title,
-                    body.author.toString(),
+                    body.title.substringBefore("-"),
+                    body.title.substringAfter("-"), // TODO: Fix APOLLO to support split apart Author for song rather then combined
                     length = body.duration,
                     position = body.position
                 ), body.author.toString(), body.identifier
