@@ -18,7 +18,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
     private val ubuntu = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/Ubuntu-Regular.ttf"))
     private val kosugi = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/KosugiMaru-Regular.ttf"))
     private val athiti = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/Athiti.ttf"))
-    fun generateAddTrack(song: Song, user: String, id: String): BufferRes {
+    fun generateAddTrack(song: Song, user: String, id: String?): BufferRes {
         val base = copyImage(staticBase)
         val thumbnail = cache.grabCacheThumb(id, fallback, false)
         val imageGenTime = measureTimeMillis {
@@ -48,7 +48,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         return BufferRes(base, thumbnail.cacheGrab, imageGenTime)
     }
 
-    fun generateAddTrackBradTemplate(song: Song, user: String, id: String): BufferRes {
+    fun generateAddTrackBradTemplate(song: Song, user: String, id: String?): BufferRes {
         val base = BufferedImage(500, 250, BufferedImage.TYPE_INT_ARGB)
         val thumbnail = cache.grabCacheThumb(id, fallback, true)
         var shortned = "${song.author} - ${song.name}"

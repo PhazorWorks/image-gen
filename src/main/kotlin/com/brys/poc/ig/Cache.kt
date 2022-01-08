@@ -1,5 +1,6 @@
 package com.brys.poc.ig
 
+import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -11,7 +12,8 @@ import kotlin.system.measureTimeMillis
 
 
 class Cache(private val executor: ExecutorService, private val path: String) {
-    fun grabCacheThumb(id: String, fallback: Boolean, bradGen: Boolean): ImageGenerator.BufferRes {
+    fun grabCacheThumb(id: String?, fallback: Boolean, bradGen: Boolean): ImageGenerator.BufferRes {
+        if (id == null) return ImageGenerator.BufferRes(BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB), false, 0)
         val cached = File("${path}/${id}.jpg")
         if (!cached.exists()) {
             Logger.warn("[com.brys.poc.ig.Cache -> Retrieve -> FileNotFound]: Cached image for $id doesn't exist.\nStreaming JPG and writing cache file.")

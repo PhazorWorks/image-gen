@@ -76,14 +76,14 @@ class Server(
                     body.title.substringAfter("-"),
                     body.uri.toString(),
                     body.duration
-                ), body.author, body.identifier.toString()
+                ), body.author, if (scan(body.uri.toString())) body.identifier else null
             ) else imgGen.generateAddTrackBradTemplate(
                 ImageGenerator.Song(
                     body.title.substringBefore("-"),
                     body.title.substringAfter("-"),
                     body.uri.toString(),
                     body.duration
-                ), body.author, body.identifier.toString()
+                ), body.author, if (scan(body.uri.toString())) body.identifier else null
             )
             val baos = ByteArrayOutputStream()
             ImageIO.write(generated.image, "png", baos)
