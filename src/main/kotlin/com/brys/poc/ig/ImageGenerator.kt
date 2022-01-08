@@ -121,6 +121,9 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         Logger.success("[Image Generator -> Add Track -> Render]: Finished in ${imageGenTime}ms")
         return BufferRes(base, false, imageGenTime)
     }
+    fun createCacheQueue(songs: MutableList<Song>, queueID: String) {
+        TODO("Create Pre Cache")
+    }
     init {
         Logger.info("[ClassLoader -> com.brys.poc.ig.ImageGenerator]: Initialized")
     }

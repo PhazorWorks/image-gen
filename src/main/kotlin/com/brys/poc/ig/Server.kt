@@ -74,16 +74,16 @@ class Server(
                 ImageGenerator.Song(
                     body.title.substringBefore("-"),
                     body.title.substringAfter("-"),
-                    body.uri,
+                    body.uri.toString(),
                     body.duration
-                ), body.author, body.identifier
+                ), body.author, body.identifier.toString()
             ) else imgGen.generateAddTrackBradTemplate(
                 ImageGenerator.Song(
                     body.title.substringBefore("-"),
                     body.title.substringAfter("-"),
-                    body.uri,
+                    body.uri.toString(),
                     body.duration
-                ), body.author, body.identifier
+                ), body.author, body.identifier.toString()
             )
             val baos = ByteArrayOutputStream()
             ImageIO.write(generated.image, "png", baos)
@@ -120,8 +120,8 @@ class Server(
         val title: String,
         val author: String,
         val duration: Long,
-        val uri: String,
-        val identifier: String
+        val uri: String?,
+        val identifier: String?
     )
 
     data class NPTrackPayload(
