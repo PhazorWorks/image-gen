@@ -36,7 +36,7 @@ class Server(
                     body.title.substringAfter("-"), // TODO: Fix APOLLO to support split apart Author for song rather then combined
                     length = body.duration,
                     position = body.position
-                ), body.author.toString(), body.identifier
+                ), body.author.toString(), if (scan(body.uri)) body.identifier else null
             )
             val baos = ByteArrayOutputStream()
             ImageIO.write(generated.image, "png", baos)
@@ -127,6 +127,7 @@ class Server(
     data class NPTrackPayload(
         val title: String,
         val author: String? = "N/A",
+        val uri: String,
         val duration: Long,
         val position: Long,
         val identifier: String?

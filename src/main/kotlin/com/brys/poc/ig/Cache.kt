@@ -28,6 +28,7 @@ class Cache(private val executor: ExecutorService, private val path: String) {
             } else if (bradGen) {url = URL("https://img.youtube.com/vi/${id}/hqdefault.jpg")}
 
             val streamedURL = ImageIO.read(url)
+
             executor.submit {
                 Logger.info("[ThreadPool -> CacheIMG]: Starting...")
                 val saveTime = measureTimeMillis {
