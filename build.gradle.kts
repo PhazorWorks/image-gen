@@ -18,8 +18,8 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.javalin:javalin:4.1.1")
-    implementation("ch.qos.logback:logback-classic:1.2.9")
+    implementation("io.javalin:javalin:4.3.0")
+    implementation("ch.qos.logback:logback-classic:1.2.10")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
 }
