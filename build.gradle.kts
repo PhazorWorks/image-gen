@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.5.10"
     application
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id ("com.google.cloud.tools.jib") version "3.1.4"
+    id ("com.google.cloud.tools.jib") version "3.2.0"
 }
 
 group = "com.brys.poc.ig"
@@ -18,10 +18,10 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.javalin:javalin:4.3.0")
-    implementation("ch.qos.logback:logback-classic:1.2.10")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
+    implementation("io.javalin:javalin:4.4.0")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
 }
 val jar by tasks.getting(Jar::class) {
     manifest {
