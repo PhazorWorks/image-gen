@@ -51,7 +51,16 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
     fun generateAddTrackBradTemplate(song: Song, user: String, id: String?): BufferRes {
         val base = BufferedImage(500, 250, BufferedImage.TYPE_INT_ARGB)
         val thumbnail = cache.grabCacheThumb(id, fallback, true)
-        var shortned = "${song.author} - ${song.name}".take(58)
+        val authorAndSongName = "${song.author} - ${song.name}"
+        val shortened:String = if (containsHANCharacters(authorAndSongName)) {
+            authorAndSongName.take(50)
+        } else {
+            if (authorAndSongName.length > 65) {
+                authorAndSongName.take(65)
+            } else {
+                authorAndSongName
+            }
+        }
         val imageGenTime = measureTimeMillis {
             val g = base.createGraphics()
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -60,11 +69,11 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
             g.drawImage(thumbnail.image, -200, -150, 700, 420, null)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Thumbnail drawn. Disposing...")
             g.drawImage(bradTemplateStaticBase, 0, 0, 500, 250, null)
-            g.font = athiti.deriveFont(Font.BOLD, 18f)
+            g.font = noto.deriveFont(Font.BOLD, 14f)
             g.color = Color.decode("#E2E2E2")
-            g.drawString(shortned, 15, 205)
+            g.drawString(shortened, 15, 205)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Song data drawn")
-            g.font = athiti.deriveFont(Font.PLAIN, 14f)
+            g.font = noto.deriveFont(Font.PLAIN, 14f)
             g.color = Color.decode("#239CDF")
             g.drawString(user.take(40), 97, 241)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: User data drawn")
@@ -78,7 +87,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         return BufferRes(base, thumbnail.cacheGrab, imageGenTime)
     }
 
-    fun containsHANCharacters(input: String): Boolean {
+    private fun containsHANCharacters(input: String): Boolean {
         return input.codePoints().anyMatch { codepoint -> Character.UnicodeScript.of(codepoint) == Character.UnicodeScript.HAN }
     }
 
