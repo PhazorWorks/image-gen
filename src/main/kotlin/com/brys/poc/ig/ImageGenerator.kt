@@ -6,7 +6,6 @@ import java.awt.image.DataBufferByte
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
-import kotlin.math.min
 import kotlin.system.measureTimeMillis
 
 
@@ -16,6 +15,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
     private val bradTemplateNPBase = ImageIO.read(File("assets/images/brad-template-np-poc.png"))
     private val apolloImage = ImageIO.read(File("assets/images/logo.png"))
     private val ubuntu = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/Ubuntu-Regular.ttf"))
+    private val noto = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/NotoSansJP-Regular.otf"))
     private val kosugi = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/KosugiMaru-Regular.ttf"))
     private val athiti = Font.createFont(Font.TRUETYPE_FONT, File("assets/fonts/Athiti.ttf"))
     fun generateAddTrack(song: Song, user: String, id: String?): BufferRes {
@@ -77,12 +77,27 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
         Logger.success("[Image Generator -> Add Track -> Render]: Finished in ${imageGenTime}ms")
         return BufferRes(base, thumbnail.cacheGrab, imageGenTime)
     }
+
+    fun containsHANCharacters(input: String): Boolean {
+        return input.codePoints().anyMatch { codepoint -> Character.UnicodeScript.of(codepoint) == Character.UnicodeScript.HAN }
+    }
+
     fun generateNPTrack(song: Song, user: String = "N/A", id: String?): BufferRes {
         val base = BufferedImage(500, 250, BufferedImage.TYPE_INT_ARGB)
         val thumbnail = id?.let { cache.grabCacheThumb(it, fallback, true) }
         val startColor = Color.decode("#4568dc")
         val endColor = Color.decode("#b06ab3")
-        var shortned = "${song.author} - ${song.name}".take(44)
+        val authorAndSongName = "${song.author} - ${song.name}"
+        val shortened:String = if (containsHANCharacters(authorAndSongName)) {
+            authorAndSongName.take(50)
+        } else {
+            if (authorAndSongName.length > 65) {
+                authorAndSongName.take(65)
+            } else {
+                authorAndSongName
+            }
+        }
+
         val imageGenTime = measureTimeMillis {
             val g = base.createGraphics()
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -93,12 +108,13 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
             }
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Thumbnail drawn. Disposing...")
             g.drawImage(bradTemplateNPBase, 0, 0, 500, 250, null)
-            g.font = athiti.deriveFont(Font.BOLD, 18f)
+//            g.font = athiti.deriveFont(Font.BOLD, 18f)
+            g.font = noto.deriveFont(Font.BOLD, 14f)
             g.color = Color.decode("#E2E2E2")
-            g.drawString(shortned, 15, 205)
-            g.drawString(formatToDigitalClock(song.position), 400, 205)
+            g.drawString(shortened, 15, 205)
+//            g.drawString(formatToDigitalClock(song.position), 400, 205)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Song data drawn")
-            g.font = athiti.deriveFont(Font.PLAIN, 14f)
+            g.font = noto.deriveFont(Font.PLAIN, 14f)
             g.color = Color.decode("#239CDF")
             g.drawString(user.take(32), 97, 241)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: User data drawn")
