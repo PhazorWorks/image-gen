@@ -18,10 +18,10 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.javalin:javalin:4.4.0")
+    implementation("io.javalin:javalin:4.6.4")
     implementation("ch.qos.logback:logback-classic:1.2.11")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
 }
 val jar by tasks.getting(Jar::class) {
     manifest {
