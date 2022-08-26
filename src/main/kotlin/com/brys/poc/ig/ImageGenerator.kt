@@ -121,7 +121,7 @@ class ImageGenerator(private val cache: Cache, private val fallback: Boolean) {
             g.font = noto.deriveFont(Font.BOLD, 14f)
             g.color = Color.decode("#E2E2E2")
             g.drawString(shortened, 15, 205)
-//            g.drawString(formatToDigitalClock(song.position), 400, 205)
+            g.drawString("Progress: " + formatToDigitalClock(song.position), 250, 242)
             Logger.debug("[com.brys.poc.ig.ImageGenerator -> AddTrack -> Render]: Song data drawn")
             g.font = noto.deriveFont(Font.PLAIN, 14f)
             g.color = Color.decode("#239CDF")
